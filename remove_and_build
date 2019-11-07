@@ -1,0 +1,4 @@
+docker kill container0 container1 container2 container3 container4
+docker rm container0 container1 container2 container3 container4
+docker build . -t paxos
+
