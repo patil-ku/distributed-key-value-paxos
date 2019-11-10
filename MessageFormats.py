@@ -39,3 +39,22 @@ class LeaderInstall(Message):
         super(LeaderInstall, self).__init__(type)
         self.server_id = server_id
         self.view_to_install = view_to_install
+
+
+# Type = 7
+class Prepare_Message(Message):
+
+    def __init__(self, type, server_id, view, local_aru):
+        super(Prepare_Message, self).__init__(type)
+        self.server_id = server_id
+        self.view = view
+        self.local_aru = local_aru
+
+
+# Type = 8: Prepare_OK
+class Prepare_OK(Message):
+    def __init__(self, type, server_id, view, data_list):
+        super(Prepare_OK, self).__init__(type)
+        self.server_id = server_id
+        self.view = view
+        self.data_list = data_list

@@ -1,9 +1,10 @@
 from MessageFormats import AliveAckMessage, AliveMessage, Message, VC_Proof, View_Change
+from Prepare import shift_to_prepare_phase
 from ProcessVariables import ProcessVariables, LEADER_ELECTION, REG_NON_LEADER, REG_LEADER
 from NetworkFunctions import are_all_nodes_up, send_to_all_servers, get_socket
 
 
-#Function to clear the data structures for my process during view change
+# Function to clear the data structures for my process during view change
 def clear_data_structures_for_vc(my_info):
     my_info.view_change_messages.clear()
     my_info.prepare_oks.clear()
@@ -64,22 +65,17 @@ def leader_of_last_attempted(process_id, last_attempted, N, my_info):
     return process_id == current_view_leader
 
 
-# Print the current leader of this view
-def print_leader(my_info, total_hosts):
-    current_view_leader = my_info.last_attempted % total_hosts
-    print("\n<{0}> :: Server {1} is the new leader of view {2}.\n".format(my_info.pid, current_view_leader,
-                                                                      my_info.last_attempted))
-
 
 # Function to handle VC_Proof Messages
-def handle_vc_proof_messages(vc_proof_msg, my_info):
+def handle_vc_proof_messages(vc_proof_msg, my_info, all_hosts):
     if vc_proof_msg.installed > my_info.last_installed:
         my_info.last_attempted = vc_proof_msg.installed
-        my_info.last_installed = vc_proof_msg.installed
+        # my_info.last_installed = vc_proof_msg.installed
         print("UPDATED VIEW TO: {0} ".format(my_info.last_attempted))
         if not my_info.set_timer:
             my_info.set_timer = True
-        print_leader(my_info)
+        if leader_of_last_attempted(my_info.pid, my_info.last_attempted, len(all_hosts), my_info):
+            shift_to_prepare_phase(my_info, all_hosts)
 
 #
 # def leader_sent_vc_message(my_info):

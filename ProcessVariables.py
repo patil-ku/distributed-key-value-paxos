@@ -1,3 +1,5 @@
+import MessageFormats
+
 REG_LEADER = 1
 REG_NON_LEADER = 2
 LEADER_ELECTION = 3
@@ -11,7 +13,8 @@ class ProcessVariables:
         self.last_installed = -1
         self.last_attempted = -1
         self.view_change_messages = {}
-        # Prepare message here, not sure how this will be implemented.
+        # Initial Prepare message here
+        self.prepare = MessageFormats.Prepare_Message(7, process_id, -1, -1)
         self.prepare_oks = {}
         self.set_timer = False
-        self.test_case = 0
+        self.local_aru = 0

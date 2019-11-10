@@ -10,8 +10,10 @@ from NetworkFunctions import are_all_nodes_up, send_to_all_servers, get_socket
 from MessageFormats import AliveAckMessage, AliveMessage, Message, VC_Proof, View_Change
 import time
 import threading
+
+from Prepare import check_conflict_for_prepare_message, handle_prepare_message, shift_to_prepare_phase, handle_prepare_ok
 from ProcessVariables import ProcessVariables, LEADER_ELECTION, REG_NON_LEADER, REG_LEADER
-from ViewChange import shift_to_leader_election, handle_view_change_message, leader_of_last_attempted, print_leader, \
+from ViewChange import shift_to_leader_election, handle_view_change_message, leader_of_last_attempted, \
     handle_vc_proof_messages, pre_install_ready
 
 # Constants defined here
@@ -132,18 +134,31 @@ if __name__ == '__main__':
                             my_info.last_installed = my_info.last_attempted
                             installed_queue.put(my_info.last_installed, block=False)
                             if leader_of_last_attempted(my_info.pid, my_info.last_attempted, total_hosts, my_info):
-                                print_leader(my_info, total_hosts)
-                            else:
-                                my_info.state = REG_NON_LEADER
-                                print_leader(my_info, total_hosts)
+                                #Shift to prepare phase
+                                # print_leader(my_info, total_hosts)
+                                shift_to_prepare_phase(my_info, all_hosts)
+                            # else:
+                            #     # Shift to reg non leader
+                            #     # my_info.state = REG_NON_LEADER
+                            #     print_leader(my_info, total_hosts)
 
                 # If received message is a VC Proof message:
                 if recvd_msg.type == 3:
                     # print("Received a VC Proof for Installed View: {0} message from {1}".format(recvd_msg.installed,
                     #                                                                             recvd_msg.server_id))
                     vc_proof_msg = VC_Proof(recvd_msg.type, recvd_msg.server_id, recvd_msg.installed)
-                    handle_vc_proof_messages(vc_proof_msg, my_info)
+                    handle_vc_proof_messages(vc_proof_msg, my_info, all_hosts)
                     # print("\n -------------------------------------------------")
                     # print("After handling VC Proof Message: Timer Flag: {0} Attempted: {1}  Installed: {2}\n"
                     #       .format(my_info.set_timer, my_info.last_attempted, my_info.last_installed))
 
+                # If received message is a Prepare Message:
+                if recvd_msg.type == 7:
+                    print("Received a Prepare Message")
+                    if not check_conflict_for_prepare_message(recvd_msg, my_info):
+                        handle_prepare_message(recvd_msg, my_info, address, total_hosts)
+
+                # If received message is a Prepare OK:
+                if recvd_msg.type == 8:
+                    print("Received Prepare OK")
+                    handle_prepare_ok(recvd_msg, my_info, all_hosts)

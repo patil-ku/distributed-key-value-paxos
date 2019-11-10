@@ -111,3 +111,15 @@ def send_to_all_servers(msg_to_send, hosts):
         if num_sent < 0:
             print("No data sent for msg type:{0}".format(msg_to_send.type))
     writing_socket.close()
+
+
+def send_message(msg_to_send, address):
+    bytes_to_send = dumps(msg_to_send)
+    writing_socket = get_socket(False)
+    leader_address = (address[0], PORT)
+    try:
+        print("Sending a message of type {0} to {1}".format(msg_to_send.type, leader_address))
+        num_sent = writing_socket.sendto(bytes_to_send, leader_address)
+    except socket.error as error:
+        print("Error sending message of type {0} to {1}::".format(msg_to_send.type, leader_address))
+    writing_socket.close()
