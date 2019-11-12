@@ -18,3 +18,7 @@ class ProcessVariables:
         self.prepare_oks = {}
         self.set_timer = False
         self.local_aru = 0
+        self.global_history = []    #array of global slots, indexed by sequence number, each containing
+                                    #Proposal - latest Proposal accepted for this sequence number, if any
+                                    #Accepts[] - array of corresponding Accept messages, indexed by server id
+                                    #Globally Ordered Update - ordered update for this sequence number, if any

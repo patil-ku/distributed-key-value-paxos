@@ -58,3 +58,31 @@ class Prepare_OK(Message):
         self.server_id = server_id
         self.view = view
         self.data_list = data_list
+
+
+# Type 9 : Proposal
+class Proposal(Message):
+    def __init__(self,type,server_id,view,seq,update):
+        super(Proposal,self).__init__(type)
+        self.server_id = server_id        #unique identifier of the sending server
+        self.view = view                  #the view in which this proposal is being made
+        self.seq = seq                    #the sequence number of this proposal
+        self.update = update              #the client update being bound to seq in this proposal
+
+
+#Type 10 : Globally Ordered Update
+class Globally_Ordered_Update(Message):
+    def __init__(self,type,server_id,seq,update):
+        super(Globally_Ordered_Update,self).__init__(type)
+        self.server_id = server_id     #unique identifier of the sending server
+        self.seq = seq                 #the sequence number of the update that was ordered
+        self.update = update           #the client update bound to seq and globally ordered
+
+#Type 11 : Accept Message
+class Accept(Message):
+    def __init__(self,type,server_id,view,seq):
+        super(Accept,self).__init__(type)
+        self.server_id = server_id  #unique identifier of the sending server
+        self.view = view            #the view for which this message applies
+        self.seq = seq              #the sequence number of the associated Proposal
+
