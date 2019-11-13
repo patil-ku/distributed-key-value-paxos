@@ -1,5 +1,6 @@
 from MessageFormats import Proposal,Accept,Globally_Ordered_Update
 from NetworkFunctions import send_to_all_servers
+from FileOps import writeToFile
 import collections
 
 
@@ -10,18 +11,17 @@ def applyProposalToDS(proposal_message,server_info):
 
 
 	#on receiving first or proposal for a new seq number
-	if(len(global_history) == 0 or seq_number >= len(global_history)):
+	if(seq_number not in global_history):
 		 gh_dict = {}
 		 gh_dict["Proposal"] = proposal_message
 		 gh_dict["Accepts"] = []
 		 gh_dict["Globally_Ordered_Update"] = None
 
-		 server_info.global_history.append(gh_dict)
+		 server_info.global_history[seq_number]=gh_dict
 
 
 	#on receiving proposal for a already existing seq number
-	elif(seq_number < len(global_history)):
-
+	else:
 		gh_dict = global_history[seq_number]
 
 		if(not gh_dict["Globally_Ordered_Update"]):
@@ -39,17 +39,19 @@ def applyAcceptToDS(acceptMessage,server_info,all_hosts):
 	seq_number  = acceptMessage.seq
 
 
-	#Conditions when seq number aready exists
-	if(seq_number < len(global_history)):
+	#Assuming when seq number aready exists
+	if(seq_number in global_history):
 		gh_dict = global_history[seq_number]
 
 		if(gh_dict["Globally_Ordered_Update"]):
-			print("global history already has entry for this seq nmber ",seq_number)
+			print("global history already has GlobOrdUpdt for this seq nmber ",seq_number)
 			return 
 
 
 		count = 0
 		accept_array = gh_dict["Accepts"]
+
+
 		for i in range(len(accept_array)):
 			if(accept_array[i]):
 				count+=1
@@ -65,8 +67,8 @@ def applyAcceptToDS(acceptMessage,server_info,all_hosts):
 		accept_array.append(acceptMessage)
 
 	else:
-		print("received accpt message for seq nmber not existing in global history")
-		pass
+		print("received accpt message for seq nmber not existing in global history ",seq_number)
+		return
 
 
 
@@ -75,7 +77,7 @@ def applyGloballyOrderedUpdateToDS(gouMessage,serve_info):
 	seq_number = gouMessage.seq
 
 	#assuming seq is already present
-	if(seq_number < len(global_history) and not global_history["Globally_Ordered_Update"]):
+	if(seq_number in global_history and not global_history["Globally_Ordered_Update"]):
 		global_history["Globally_Ordered_Update"] = gouMessage
 
 
@@ -87,6 +89,7 @@ def Globally_Ordered_Ready(seq,serve_info,all_hosts):
 	gh_dict = global_history[seq_number]
 	if(gh_dict["Proposal"]):
 		d = collections.defaultdict("int")
+
 		accept_array = gh_dict["Accepts"]
 		for i in range(len(accept_array)):
 			d[accept_array[i].view]+=1
@@ -109,7 +112,8 @@ def handleProposal(proposal_message,server_info,all_hosts):
 	acceptMessage = Accept(11,server_info.pid,proposal_message.view,proposal_message.seq)
 
 	## synch to disc ##
-	#since serve_info is updated, it sould be written to disk?
+	## write central data or proposal message?
+	## writeToFile()
 
 	#Send accept message to all Servers
 	send_to_all_servers(acceptMessage,all_hosts)

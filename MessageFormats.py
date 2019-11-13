@@ -86,3 +86,13 @@ class Accept(Message):
         self.view = view            #the view for which this message applies
         self.seq = seq              #the sequence number of the associated Proposal
 
+
+
+class ClientUpdate(Message):
+    def __init__(self,type,client_id,server_id,timestamp,update):
+        super(ClientUpdate,self).__init__(type)
+        self.client_id = client_id
+        self.server_id = server_id
+        self.timestamp = timestamp
+        self.update = update
+

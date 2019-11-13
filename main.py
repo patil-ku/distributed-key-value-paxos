@@ -16,6 +16,7 @@ from ProcessVariables import ProcessVariables, LEADER_ELECTION, REG_NON_LEADER, 
 from ViewChange import shift_to_leader_election, handle_view_change_message, leader_of_last_attempted, \
     handle_vc_proof_messages, pre_install_ready
 from GlobalOrder import handleProposal,handleAccept
+from ClientFuntions import handleClientUpdates
 
 # Constants defined here
 PORT = 9999
@@ -175,5 +176,11 @@ if __name__ == '__main__':
                 if(recvd_msg.type == 11):
                     print("Received Accept")
                     handleAccept(recvd_msg,my_info,all_hosts)
+
+
+                if(recvd_msg.type == 12):
+                    print("client update received ")
+                    handleClientUpdates(recvd_msg,my_info)
+
 
 
