@@ -123,3 +123,17 @@ def send_message(msg_to_send, address):
     except socket.error as error:
         print("Error sending message of type {0} to {1}::".format(msg_to_send.type, leader_address))
     writing_socket.close()
+
+
+def send_message_using_hostname(msg_to_send, hostname):
+    bytes_to_send = dumps(msg_to_send)
+    writing_socket = get_socket(False)
+    try:
+        addr = socket.gethostbyname(hostname)
+    except socket.error as error:
+        print("Error in gethostbyname in send_message_using_hostname:{0} \n ".format(error))
+    serv_addr = (addr, PORT)
+    num_sent = writing_socket.sendto(bytes_to_send, serv_addr)
+    if num_sent < 0:
+        print("No data sent for msg type:{0}".format(msg_to_send.type))
+    writing_socket.close()

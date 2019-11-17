@@ -62,7 +62,7 @@ class Prepare_OK(Message):
 
 # Type 9 : Proposal
 class Proposal(Message):
-    def __init__(self, type, server_id, view, seq, update):
+    def __init__(self,type,server_id,view,seq,update):
         super(Proposal,self).__init__(type)
         self.server_id = server_id        #unique identifier of the sending server
         self.view = view                  #the view in which this proposal is being made
@@ -70,7 +70,7 @@ class Proposal(Message):
         self.update = update              #the client update being bound to seq in this proposal
 
 
-# Type 10 : Globally Ordered Update
+#Type 10 : Globally Ordered Update
 class Globally_Ordered_Update(Message):
     def __init__(self,type,server_id,seq,update):
         super(Globally_Ordered_Update,self).__init__(type)
@@ -78,8 +78,7 @@ class Globally_Ordered_Update(Message):
         self.seq = seq                 #the sequence number of the update that was ordered
         self.update = update           #the client update bound to seq and globally ordered
 
-
-# Type 11 : Accept Message
+#Type 11 : Accept Message
 class Accept(Message):
     def __init__(self,type,server_id,view,seq):
         super(Accept,self).__init__(type)
@@ -89,11 +88,9 @@ class Accept(Message):
 
 
 # Type 12: Client Update
-# For now, let's just assume that "update" field will have the value to be written to a file
-# We can classify update later
 class Client_Update(Message):
-    def __init__(self, type, client_id, server_id, timestamp, update):
-        super(Client_Update, self).__init__(type)
+    def __init__(self,type,client_id,server_id,timestamp,update):
+        super(Client_Update,self).__init__(type)
         self.client_id = client_id
         self.server_id = server_id
         self.timestamp = timestamp

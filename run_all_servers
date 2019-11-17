@@ -1,0 +1,32 @@
+if [ -z "$1" ]
+
+then
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container0 --network first_network paxos -h hostfile.txt -n container0;'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container1 --network first_network paxos -h hostfile.txt -n container1;'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container2 --network first_network paxos -h hostfile.txt -n container2;'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container3 --network first_network paxos -h hostfile.txt -n container3;'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container4 --network first_network paxos -h hostfile.txt -n container4;'
+
+
+
+else
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container0 --network first_network paxos -h hostfile.txt -n container0; read'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container1 --network first_network paxos -h hostfile.txt -n container1; read'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container2 --network first_network paxos -h hostfile.txt -n container2; read'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container3 --network first_network paxos -h hostfile.txt -n container3; read'
+
+gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container4 --network first_network paxos -h hostfile.txt -n container4; read'
+
+
+fi
+
+

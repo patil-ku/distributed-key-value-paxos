@@ -13,11 +13,12 @@ import threading
 
 from Prepare import check_conflict_for_prepare_message, handle_prepare_message, shift_to_prepare_phase, handle_prepare_ok
 from ProcessVariables import ProcessVariables, LEADER_ELECTION, REG_NON_LEADER, REG_LEADER
+from Proposal import check_conflict_for_proposal, handle_proposal
 from ViewChange import shift_to_leader_election, handle_view_change_message, leader_of_last_attempted, \
     handle_vc_proof_messages, pre_install_ready
-from GlobalOrder import handleProposal,handleAccept
-from ClientFuntions import handleClientUpdates
-
+# from GlobalOrder import handleProposal,handleAccept
+from ClientFuntions import handle_client_write_updates, handle_client_updates
+from Accept import handle_accept, check_conflicts_for_accept
 # Constants defined here
 PORT = 9999
 LOCAL_ADDRESS = "127.0.0.1"
@@ -75,7 +76,6 @@ if __name__ == '__main__':
     # Initialize all data structures for this process:
     process_id = int(my_name.split('r')[1])
     my_info = ProcessVariables(process_id)
-    my_info.test_case = test_case
     print("My process_id is::{0}".format(my_info.pid))
     hosts = get_all_hosts(host_file)
 
@@ -90,6 +90,7 @@ if __name__ == '__main__':
 
     # All nodes are up, get all the hosts and start the algorithm
     all_hosts = get_all_hosts(host_file)
+    my_info.all_hosts = all_hosts
     total_hosts = len(all_hosts)
     listening_socket = get_socket(True)
     inputs = [listening_socket]
@@ -123,6 +124,7 @@ if __name__ == '__main__':
                 recvd_msg = loads(msg)
                 # If received message is a View_Change message
                 if recvd_msg.type == 2:
+                    # print("Received a view change message from {0}".format(recvd_msg.server_id))
                     handle_view_change_message(recvd_msg, my_info)
                     if pre_install_ready(recvd_msg.attempted, my_info, total_hosts):
                         # print(" \nPRE-INSTALL PHASE \n")
@@ -169,18 +171,26 @@ if __name__ == '__main__':
 
                 # if received message is a Proposal
                 if recvd_msg.type == 9:
-                    print("Received Proposal")
-                    handleProposal(recvd_msg,my_info,all_hosts)
-
+                    print("Received Proposal with the following details: ")
+                    print("Server_ID: {0}   View: {1}   Seq: {2}  Update:{3}".format(recvd_msg.server_id, recvd_msg.view
+                                                                                     , recvd_msg.seq, recvd_msg.update.update))
+                    if not check_conflict_for_proposal(my_info, recvd_msg):
+                        print("No conflicts in proposal received")
+                        handle_proposal(my_info, recvd_msg)
+                    # handleProposal(recvd_msg,my_info,all_hosts)
+                #
                 # if received message is a Accept
-                if(recvd_msg.type == 11):
-                    print("Received Accept")
-                    handleAccept(recvd_msg,my_info,all_hosts)
+                if recvd_msg.type == 11:
+                    if not check_conflicts_for_accept(my_info, recvd_msg):
+                        print("Received Accept")
+                        handle_accept(my_info, recvd_msg)
 
+                if recvd_msg.type == 12:
+                    print("Client update received ")
+                    handle_client_updates(recvd_msg, my_info)
 
-                if(recvd_msg.type == 12):
-                    print("client update received ")
-                    handleClientUpdates(recvd_msg,my_info)
-
+                if(recvd_msg.type == 13):
+                    print("Client write update received")
+                    handle_client_write_updates(recvd_msg, my_info)
 
 

@@ -15,16 +15,27 @@ class ProcessVariables:
         self.view_change_messages = {}
         # Initial Prepare message here
         self.prepare = MessageFormats.Prepare_Message(7, process_id, -1, -1)
-        #Global Ordering variables
+        # Global Ordering variables
         self.prepare_oks = {}
         self.set_timer = False
         self.local_aru = 0
-        self.global_history = {}    #dict of global slots, mapped by sequence number, each containing
-                                    #Proposal - latest Proposal accepted for this sequence number, if any
-                                    #Accepts[] - array of corresponding Accept messages, indexed by server id
-                                    #Globally Ordered Update - ordered update for this sequence number, if any
-        #Client Handling variables
-        self.update_queue = []      #queue of Client Update messages
-        self.last_executed = {}     #dict of timestamps, mapped by client id, i.e client_id : timestamp
-        self.last_enqueued = {}     #dict of timestamps, mapped by client id, i.e client_id : timestamp
-        self.pending_updates = {}   #dict of Client Update messages, indexed by client id, i.e cloent_id : update
+
+        # dict of global slots, mapped by sequence number, each containing
+        # Proposal - latest Proposal accepted for this sequence number, if any
+        # Accepts[] - array of corresponding Accept messages, indexed by server id
+        # Globally Ordered Update - ordered update for this sequence number, if any
+        self.global_history_dict = {"Proposal": None, "Accepts": [], "Globally_Ordered_Update": None}
+        # This is a dict of dicts: eg: {1:{"Proposal": None, "Accepts": [], "Globally_Ordered_Update": None}}
+        self.global_history = {-1: self.global_history_dict}
+
+        # Client Handling variables
+        self.update_queue = []      # queue of Client Update messages
+        self.last_executed = {}     # dict of timestamps, mapped by client id, i.e client_id : timestamp
+        self.last_enqueued = {}     # dict of timestamps, mapped by client id, i.e client_id : timestamp
+        self.pending_updates = {}   # dict of Client Update messages, indexed by client id, i.e client_id : update
+
+        # Will be used when it receives an update from a client - A bit skeptical about this (but seq numbers come
+        # from clients)
+        self.seq_no = 0
+        self.current_leader_hostname = None
+        self.all_hosts = []

@@ -1,5 +1,5 @@
 from MessageFormats import AliveAckMessage, AliveMessage, Message, VC_Proof, View_Change
-from Prepare import shift_to_prepare_phase
+from Prepare import shift_to_prepare_phase, shift_to_reg_non_leader
 from ProcessVariables import ProcessVariables, LEADER_ELECTION, REG_NON_LEADER, REG_LEADER
 from NetworkFunctions import are_all_nodes_up, send_to_all_servers, get_socket
 
@@ -25,14 +25,12 @@ def apply_vc_to_data_structures(view_change_msg, my_info):
 
 # Function for initiating the leader election protocol
 def shift_to_leader_election(view, all_hosts, my_info):
+    # print("Shifted to leader election")
     my_info.state = LEADER_ELECTION
     clear_data_structures_for_vc(my_info)
     my_info.last_attempted = view
     vc = View_Change(2, my_info.pid, my_info.last_attempted)
     # print("Sending vc messages to everyone...")
-    if my_info.test_case == 3 and my_info.pid == 1:
-        if my_info.last_attempted == 1:
-            exit(2)
     send_to_all_servers(vc, all_hosts)
     apply_vc_to_data_structures(vc, my_info)
 
@@ -65,7 +63,6 @@ def leader_of_last_attempted(process_id, last_attempted, N, my_info):
     return process_id == current_view_leader
 
 
-
 # Function to handle VC_Proof Messages
 def handle_vc_proof_messages(vc_proof_msg, my_info, all_hosts):
     if vc_proof_msg.installed > my_info.last_installed:
@@ -76,6 +73,8 @@ def handle_vc_proof_messages(vc_proof_msg, my_info, all_hosts):
             my_info.set_timer = True
         if leader_of_last_attempted(my_info.pid, my_info.last_attempted, len(all_hosts), my_info):
             shift_to_prepare_phase(my_info, all_hosts)
+        else:
+            shift_to_reg_non_leader(my_info)
 
 #
 # def leader_sent_vc_message(my_info):
