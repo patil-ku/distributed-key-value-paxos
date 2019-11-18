@@ -2,6 +2,7 @@ from NetworkFunctions import send_to_all_servers, send_message
 from MessageFormats import Proposal, Accept
 from ProcessVariables import REG_NON_LEADER
 
+
 # Message to send the proposals:
 def send_proposals(my_info):
     # Maybe we don't need the seq in myINfo?

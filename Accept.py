@@ -1,3 +1,4 @@
+from ClientUpdateExecution import execute_client_update
 from NetworkFunctions import send_to_all_servers
 from MessageFormats import Globally_Ordered_Update
 
@@ -56,7 +57,6 @@ def apply_globally_ordered_update_to_ds(my_info, gbu):
     if gbu.seq in my_info.global_history:
         if my_info.global_history[gbu.seq]['Globally_Ordered_Update'] is None:
             my_info.global_history[gbu.seq]['Globally_Ordered_Update'] = gbu
-            # Add another queue here
 
 
 # Advance ARU
@@ -77,11 +77,19 @@ def handle_accept(my_info, accept_msg):
     if globally_ordered_update(my_info, accept_msg):
         # At this point, the client update should be present in the Proposal message that has been stored in
         # Global history for a particular seq number under 'Proposal'
-        client_update = my_info.global_history[accept_msg.seq]['Proposal']
+        client_update = my_info.global_history[accept_msg.seq]['Proposal'].update
         globally_ordered_client_update = Globally_Ordered_Update(10, my_info.pid, accept_msg.seq,  client_update)
         apply_globally_ordered_update_to_ds(my_info, globally_ordered_client_update)
         advance_aru(my_info)
         print("Update globally ordered, current ARU: {0}   GBU_Seq:{1}".format(my_info.local_aru,
-                                                                      globally_ordered_client_update.seq))
+                                                                               globally_ordered_client_update.seq))
+        if my_info.local_aru == accept_msg.seq:
+            # Execute the client update
+            # Need to stop this from happening twice
+            print("Executing the client update...")
+            execute_client_update(my_info, accept_msg)
+            return
     else:
-        print("Update not globally ordered yet")
+        print("Update not globally ordered")
+
+
