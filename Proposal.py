@@ -1,6 +1,7 @@
 from NetworkFunctions import send_to_all_servers, send_message
 from MessageFormats import Proposal, Accept
 from ProcessVariables import REG_NON_LEADER
+from FileOps import writeToFile
 
 
 # Message to send the proposals:
@@ -31,6 +32,7 @@ def send_proposals(my_info):
     my_info.last_proposed = seq
     my_info.seq = seq
     # **SYNC to disk
+    writeToFile(my_info)
     print("Sending proposal to everyone now...")
     send_to_all_servers(proposal, my_info.all_hosts)
 

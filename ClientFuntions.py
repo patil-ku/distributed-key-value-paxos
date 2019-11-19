@@ -1,5 +1,5 @@
 from MessageFormats import Client_Update, Proposal
-from FileOps import write_to_file_dummy
+from FileOps import write_to_file_dummy,writeToFile
 from pickle import loads
 from ProcessVariables import LEADER_ELECTION, REG_LEADER, REG_NON_LEADER
 from NetworkFunctions import send_message_using_hostname
@@ -25,6 +25,8 @@ def add_to_pending_updates(client_update, server_info):
     server_info.pending_updates[client_update.client_id] = client_update
     # Set Update Timer(U.client id)
     # Sync to disk
+    writeToFile(server_info)
+
 
 
 # Function to handle client update according to the state the server is in
