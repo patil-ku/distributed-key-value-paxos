@@ -1,7 +1,7 @@
 from ProcessVariables import LEADER_ELECTION, REG_LEADER, REG_NON_LEADER
 from MessageFormats import Prepare_Message, Prepare_OK
 from NetworkFunctions import send_message, send_to_all_servers
-from FileOps import writeToFile
+from FileOps import write_to_file
 
 # Flag only used for checking if the leader has installed the view, this is to prevent the leader to go into
 # shift_to_reg_leader() every time a prepare ok comes after majority is reached.
@@ -90,7 +90,7 @@ def shift_to_prepare_phase(my_info, all_hosts):
 	my_info.prepare_oks[my_info.pid] = prepare_ok
 	# Clear last_enqueued
 	# Sync to disk
-	writeToFile(my_info)
+	write_to_file(my_info)
 
 	send_to_all_servers(prepare_msg, all_hosts)
 
@@ -120,7 +120,7 @@ def get_hostname_of_current_leader(server_id, my_info):
 def shift_to_reg_non_leader(my_info):
 	my_info.state = REG_NON_LEADER
 	my_info.last_installed = my_info.last_attempted
-	writeToFile(my_info)
+	write_to_file(my_info)
 	return
 	# Clear Update queue
 

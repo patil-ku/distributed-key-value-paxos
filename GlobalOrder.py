@@ -1,6 +1,6 @@
 from MessageFormats import Proposal,Accept,Globally_Ordered_Update
 from NetworkFunctions import send_to_all_servers
-from FileOps import writeToFile
+from FileOps import write_to_file
 import collections
 
 

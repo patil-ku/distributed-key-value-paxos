@@ -19,6 +19,7 @@ from ViewChange import shift_to_leader_election, handle_view_change_message, lea
 # from GlobalOrder import handleProposal,handleAccept
 from ClientFuntions import handle_client_write_updates, handle_client_updates
 from Accept import handle_accept, check_conflicts_for_accept
+from Recovery import recover
 # Constants defined here
 PORT = 9999
 LOCAL_ADDRESS = "127.0.0.1"
@@ -75,7 +76,7 @@ if __name__ == '__main__':
 
     # Initialize all data structures for this process:
     process_id = int(my_name.split('r')[1])
-    my_info = ProcessVariables(process_id)
+    my_info = recover(process_id)
     print("My process_id is::{0}".format(my_info.pid))
     hosts = get_all_hosts(host_file)
 

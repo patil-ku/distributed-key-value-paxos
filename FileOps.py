@@ -1,7 +1,7 @@
 import pickle
 
 
-def writeToFile(data):
+def write_to_file(data):
 	try :
 		with open("log","ab") as file:
 			pickle.dump(data,file)
@@ -10,7 +10,7 @@ def writeToFile(data):
 		print("error in writing to log file",e)
 
 
-def readFromFile():
+def read_from_file():
 	objList = []
 	try:
 		with open("log","rb") as file:
