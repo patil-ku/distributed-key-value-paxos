@@ -11,17 +11,15 @@ def write_to_file(data):
 
 
 def read_from_file():
-	objList = []
+	server_info = None
 	try:
 		with open("log","rb") as file:
-			while(True):
-				try:
-					objList.append(pickle.load(file))
-				except EOFError:
-					break			
-		return objList
+			server_info = pickle.load(file)
+
 	except Exception as e:
 		print("error in reading from log file ", e)
+
+	return server_info
 
 
 # Dummy operation to write incoming data to a file
