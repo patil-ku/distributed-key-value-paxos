@@ -50,6 +50,9 @@ def handle_client_updates(client_update, my_info):
             send_proposals(my_info)
 
 
+
+
+
 # Dummy method for testing
 def handle_client_write_updates(write_msg, my_info):
     print("Inside client write update")
