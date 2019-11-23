@@ -78,6 +78,8 @@ def are_all_nodes_up(hosts, my_info):
 def get_socket(bindStatus):
     try:
         sockfd = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        sockfd.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
+        sockfd.setblocking(0)
         # print("SOCKET")
         # print(sockfd)
     except socket.error as msg:
@@ -90,8 +92,7 @@ def get_socket(bindStatus):
         except socket.error as msg:
             print("Error in binding:: " + msg)
             socket.close(sockfd)
-    sockfd.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
-    sockfd.setblocking(0)
+
     return sockfd
 
 
@@ -118,7 +119,7 @@ def send_message(msg_to_send, address):
     writing_socket = get_socket(False)
     leader_address = (address[0], PORT)
     try:
-        print("Sending a message of type {0} to {1}".format(msg_to_send.type, leader_address))
+        # print("Sending a message of type {0} to {1}".format(msg_to_send.type, leader_address))
         num_sent = writing_socket.sendto(bytes_to_send, leader_address)
     except socket.error as error:
         print("Error sending message of type {0} to {1}::".format(msg_to_send.type, leader_address))

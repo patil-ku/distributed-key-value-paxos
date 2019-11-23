@@ -1,3 +1,5 @@
+from Accept import apply_globally_ordered_update_to_ds
+from ClientFuntions import enqueue_unbound_pending_updates, remove_bound_updates_from_queue
 from ProcessVariables import LEADER_ELECTION, REG_LEADER, REG_NON_LEADER
 from MessageFormats import Prepare_Message, Prepare_OK
 from NetworkFunctions import send_message, send_to_all_servers
@@ -5,6 +7,8 @@ from FileOps import write_to_file
 
 # Flag only used for checking if the leader has installed the view, this is to prevent the leader to go into
 # shift_to_reg_leader() every time a prepare ok comes after majority is reached.
+from Proposal import send_proposals, apply_proposal_to_ds
+
 leader_view_installed = False
 
 
@@ -34,7 +38,14 @@ def update_prepare_to_data_structures(prepare_msg, my_info):
 def update_prepare_ok_to_data_structures(prepare_ok_msg, my_info):
 	if prepare_ok_msg.server_id not in my_info.prepare_oks:
 		my_info.prepare_oks[prepare_ok_msg.server_id] = prepare_ok_msg
-		# Update data list here - Have to add
+	for d in prepare_ok_msg.data_list:
+		# If this is Proposal:
+		if d.type == 9:
+			apply_proposal_to_ds(my_info, d)
+
+		# If this is a Globally Ordered Update:
+		if d.type == 10:
+			apply_globally_ordered_update_to_ds(my_info, d)
 
 
 # Handle prepare_ok messages here:
@@ -44,8 +55,9 @@ def handle_prepare_ok(prepare_ok_msg, my_info, all_hosts):
 	if not leader_view_installed:
 		if view_prepared_ready(prepare_ok_msg.view, my_info, len(all_hosts)):
 			print("\nPrepare phase over, let's shift to leader....\n")
-			shift_to_reg_leader(my_info)
 			print_leader(my_info, len(all_hosts))
+			shift_to_reg_leader(my_info)
+
 
 
 # Check if you have received enough prepare_oks
@@ -62,7 +74,7 @@ def view_prepared_ready(view, my_info, total_hosts_number):
 
 
 def handle_prepare_message(prepare_msg, my_info, address, total_hosts):
-	print("Handling prepare message")
+	# print("Handling prepare message")
 	if my_info.state == LEADER_ELECTION:
 		update_prepare_to_data_structures(prepare_msg, my_info)
 		data_list = construct_data_list(my_info, prepare_msg.aru)
@@ -74,14 +86,15 @@ def handle_prepare_message(prepare_msg, my_info, address, total_hosts):
 		print_leader(my_info, total_hosts)
 	else:
 		# Already installed the view
-		prepare_ok = my_info.prepare_oks.get(my_info.pid)
-		send_message(prepare_ok, address)
+		if my_info.pid in my_info.prepare_oks:
+			prepare_ok = my_info.prepare_oks.get(my_info.pid)
+			send_message(prepare_ok, address)
 		print_leader(my_info, total_hosts)
 
 
 # Shift to prepare phase for leader:
 def shift_to_prepare_phase(my_info, all_hosts):
-	print("In prepare phase, getting ready to send prepare to all servers...")
+	# print("In prepare phase, getting ready to send prepare to all servers...")
 	my_info.last_installed = my_info.last_attempted
 	prepare_msg = Prepare_Message(7, my_info.pid, my_info.last_installed, my_info.local_aru)
 	update_prepare_to_data_structures(prepare_msg, my_info)
@@ -97,14 +110,14 @@ def shift_to_prepare_phase(my_info, all_hosts):
 
 # Construct data_list to send to all leader
 def construct_data_list(my_info, aru):
-	print("Making a data list")
-	data_list = {}
-	for i in range(0, my_info.seq_no):
+	# print("Making a data list")
+	data_list = []
+	for i in my_info.global_history:
 		if i > aru and my_info.global_history[i]:
 			if my_info.global_history[i]['Globally_Ordered_Update'] is not None:
-				data_list = data_list.update(my_info.global_history[i]['Globally_Ordered_Update'])
+				data_list = data_list.append(my_info.global_history[i].get('Globally_Ordered_Update'))
 			else:
-				data_list = data_list.update(my_info.global_history[i].get("Proposal"))
+				data_list = data_list.append(my_info.global_history[i].get("Proposal"))
 	return data_list
 
 
@@ -120,16 +133,15 @@ def get_hostname_of_current_leader(server_id, my_info):
 def shift_to_reg_non_leader(my_info):
 	my_info.state = REG_NON_LEADER
 	my_info.last_installed = my_info.last_attempted
+	my_info.update_queue.clear()
 	write_to_file(my_info)
-	return
-	# Clear Update queue
+
 
 
 # Function to shift to regular leader
 def shift_to_reg_leader(my_info):
 	my_info.state = REG_LEADER
-	# Enqueue unbound pending updates
-	# Remove bound updates from queue
+	enqueue_unbound_pending_updates(my_info)
+	remove_bound_updates_from_queue(my_info)
 	my_info.last_proposed = my_info.local_aru
-	return
-	# Send proposal
+	send_proposals(my_info)

@@ -2,29 +2,29 @@ if [ -z "$1" ]
 
 then
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container0 --network first_network paxos;'
+gnome-terminal  -- /bin/bash -c 'docker run --rm -ti  --name container0 --network first_network paxos;' --title="container0"
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container1 --network first_network paxos;'
+gnome-terminal --title="container1" -- /bin/bash -c 'docker run --rm -ti  --name container1 --network first_network paxos;'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container2 --network first_network paxos;'
+gnome-terminal --title="container2" -- /bin/bash -c 'docker run --rm -ti  --name container2 --network first_network paxos;'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container3 --network first_network paxos;'
+gnome-terminal --title="container3" -- /bin/bash -c 'docker run --rm -ti  --name container3 --network first_network paxos;'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container4 --network first_network paxos;'
+gnome-terminal --title="container4" -- /bin/bash -c 'docker run --rm -ti  --name container4 --network first_network paxos;'
 
 
 
 else
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container0 --network first_network paxos ; read'
+gnome-terminal --title="container0" -- /bin/bash -c 'docker run --rm -ti  --name container0 --network first_network paxos ; read'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container1 --network first_network paxos ; read'
+gnome-terminal --title="container1" -- /bin/bash -c 'docker run --rm -ti  --name container1 --network first_network paxos ; read'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container2 --network first_network paxos ; read'
+gnome-terminal --title="container2" -- /bin/bash -c 'docker run --rm -ti  --name container2 --network first_network paxos ; read'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container3 --network first_network paxos ; read'
+gnome-terminal --title="container3" -- /bin/bash -c 'docker run --rm -ti  --name container3 --network first_network paxos ; read'
 
-gnome-terminal -- /bin/bash -c 'docker run --rm -ti  --name container4 --network first_network paxos ; read'
+gnome-terminal --title="container4" -- /bin/bash -c 'docker run --rm -ti  --name container4 --network first_network paxos ; read'
 
 
 fi

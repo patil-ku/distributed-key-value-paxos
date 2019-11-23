@@ -89,7 +89,7 @@ class Accept(Message):
 
 # Type 12: Client Update
 class Client_Update(Message):
-    def __init__(self,type,client_id,server_id,timestamp,update):
+    def __init__(self, type, client_id,server_id,timestamp,update):
         super(Client_Update,self).__init__(type)
         self.client_id = client_id
         self.server_id = server_id

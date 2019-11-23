@@ -2,6 +2,10 @@
 # Maintain this file to execute client updates
 from ProcessVariables import LEADER_ELECTION, REG_LEADER
 from Proposal import send_proposals
+from NetworkFunctions import send_message
+
+
+PORT = 9999
 
 
 def execute_client_update(my_info, accept_msg):
@@ -17,11 +21,22 @@ def execute_client_update(my_info, accept_msg):
     upon_executing_client_update(my_info,  client_update)
 
 
+# Function to reply to client
+def reply_to_client(my_info, client_update):
+    client_address = my_info.client_map[client_update.client_id]
+    # Dummy, add a message format later
+    msg = "SUCCESS for timestamp: {0} update:{1}".format(client_update.timestamp, client_update.update)
+    send_message(msg, client_address)
+
+
 # Function to execute after the client update is executed
 def upon_executing_client_update(my_info, client_update):
     advance_aru(my_info)
     if client_update.server_id == my_info.pid:
-        # Reply to client
+        # Reply to client with a success message: use the map stored in my_info
+        reply_to_client(my_info, client_update)
+        print("Success message sent to client for client_id:{0} and timestamp:{1} and address: {2}"
+              .format(client_update.client_id, client_update.timestamp, my_info.client_map[client_update.client_id]))
         if client_update in my_info.pending_updates.values():
             # Cancel Update Timer
             # Remove this update from the pending updates list

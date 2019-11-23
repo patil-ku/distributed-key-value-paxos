@@ -1,1 +1,0 @@
-docker run --rm -ti  --name $1 --network first_network paxos -h hostfile.txt -n $1

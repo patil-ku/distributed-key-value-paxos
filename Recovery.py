@@ -22,7 +22,7 @@ def recover(pid):
 			my_info = ProcessVariables(pid)
 		else:
 			#considering we get a single element for now
-			shift_to_leader_election(my_info.last_installed+1,all_hosts,my_info)		
+			shift_to_leader_election(my_info.last_installed+1, my_info.all_hosts,my_info)
 	else:
 		print("log does not exist, initialising data .. ")
 		my_info = ProcessVariables(pid)

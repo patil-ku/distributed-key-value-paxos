@@ -8,6 +8,8 @@ from NetworkFunctions import are_all_nodes_up, send_to_all_servers, get_socket
 def clear_data_structures_for_vc(my_info):
     my_info.view_change_messages.clear()
     my_info.prepare_oks.clear()
+    my_info.last_enqueued.clear()
+    my_info.prepare = None
 
 
 # Function to apply the given view change message to the process's data structures

@@ -34,8 +34,10 @@ class ProcessVariables:
         self.last_enqueued = {}     # dict of timestamps, mapped by client id, i.e client_id : timestamp
         self.pending_updates = {}   # dict of Client Update messages, indexed by client id, i.e client_id : update
 
-        # Will be used when it receives an update from a client - A bit skeptical about this (but seq numbers come
-        # from clients)
+        # Will be used when it receives an update from a client - A bit skeptical about this
         self.seq_no = 0
         self.current_leader_hostname = None
         self.all_hosts = []
+
+        # Map for clients, the client ids are mapped to the client addresses to send data back to
+        self.client_map = {}

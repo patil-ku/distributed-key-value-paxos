@@ -102,7 +102,7 @@ if __name__ == '__main__':
     t.start()
     installed_queue = queue.Queue()
 
-    vc_proof_thread = threading.Timer(10.0, thread_send_vc_proof, args=(my_info, installed_queue, my_info.last_installed))
+    vc_proof_thread = threading.Timer(5.0, thread_send_vc_proof, args=(my_info, installed_queue, my_info.last_installed))
     vc_proof_thread.start()
     vc_proof_flag = True
     while True:
@@ -110,8 +110,6 @@ if __name__ == '__main__':
         if (not t.is_alive()) and my_info.set_timer:
             my_info.set_timer = False
             print("\n Starting a new View Change...\n")
-            # print("Current last_installed : {0} last_attempted: {1}".format(my_info.last_installed,
-            #                                                                 my_info.last_attempted))
             shift_to_leader_election(my_info.last_attempted+1, all_hosts, my_info)
 
         # Select and start receiving different messages
@@ -139,13 +137,7 @@ if __name__ == '__main__':
                             my_info.last_installed = my_info.last_attempted
                             installed_queue.put(my_info.last_installed, block=False)
                             if leader_of_last_attempted(my_info.pid, my_info.last_attempted, total_hosts, my_info):
-                                #Shift to prepare phase
-                                # print_leader(my_info, total_hosts)
                                 shift_to_prepare_phase(my_info, all_hosts)
-                            # else:
-                            #     # Shift to reg non leader
-                            #     # my_info.state = REG_NON_LEADER
-                            #     print_leader(my_info, total_hosts)
 
                 # If received message is a VC Proof message:
                 if recvd_msg.type == 3:
@@ -159,16 +151,14 @@ if __name__ == '__main__':
 
                 # If received message is a Prepare Message:
                 if recvd_msg.type == 7:
-                    print("Received a Prepare Message")
+                    # print("Received a Prepare Message")
                     if not check_conflict_for_prepare_message(recvd_msg, my_info):
                         handle_prepare_message(recvd_msg, my_info, address, total_hosts)
 
                 # If received message is a Prepare OK:
                 if recvd_msg.type == 8:
-                    print("Received Prepare OK")
+                    # print("Received Prepare OK")
                     handle_prepare_ok(recvd_msg, my_info, all_hosts)
-
-
 
                 # if received message is a Proposal
                 if recvd_msg.type == 9:
@@ -176,18 +166,19 @@ if __name__ == '__main__':
                     print("Server_ID: {0}   View: {1}   Seq: {2}  Update:{3}".format(recvd_msg.server_id, recvd_msg.view
                                                                                      , recvd_msg.seq, recvd_msg.update.update))
                     if not check_conflict_for_proposal(my_info, recvd_msg):
-                        print("No conflicts in proposal received")
+                        # print("No conflicts in proposal received")
                         handle_proposal(my_info, recvd_msg)
                     # handleProposal(recvd_msg,my_info,all_hosts)
                 #
                 # if received message is a Accept
                 if recvd_msg.type == 11:
                     if not check_conflicts_for_accept(my_info, recvd_msg):
-                        print("Received Accept")
+                        # print("Received Accept")
                         handle_accept(my_info, recvd_msg)
 
                 if recvd_msg.type == 12:
                     print("Client update received ")
+                    my_info.client_map[recvd_msg.client_id] = address
                     handle_client_updates(recvd_msg, my_info)
 
                 if(recvd_msg.type == 13):
