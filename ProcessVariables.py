@@ -41,3 +41,10 @@ class ProcessVariables:
 
         # Map for clients, the client ids are mapped to the client addresses to send data back to
         self.client_map = {}
+
+        # Flag used for restarting progress timer after executing client update
+        self.update_executed = False
+
+        # Dictionary used for managing update timer threads
+        self.update_threads = {}
+        self.update_thread_flag = False

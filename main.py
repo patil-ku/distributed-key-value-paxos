@@ -112,6 +112,8 @@ if __name__ == '__main__':
             print("\n Starting a new View Change...\n")
             shift_to_leader_election(my_info.last_attempted+1, all_hosts, my_info)
 
+
+
         # Select and start receiving different messages
         try:
             input_ready, _, _ = select.select(inputs, [], [], 5)

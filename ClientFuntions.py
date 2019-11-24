@@ -4,6 +4,19 @@ from pickle import loads
 from ProcessVariables import LEADER_ELECTION, REG_LEADER, REG_NON_LEADER
 from NetworkFunctions import send_message_using_hostname
 from Proposal import send_proposals
+import threading
+
+
+# Threading function for update timer:
+def update_timer_function(my_info, client_update):
+    if my_info.update_thread_flag:
+        print("Update Timer expired, Sending updates back to leader and restarting timer...")
+        if my_info.state == REG_NON_LEADER:
+            if my_info.current_leader_hostname is not None:
+                send_message_using_hostname(client_update, my_info.current_leader_hostname)
+        threading.Timer(10.0, update_timer_function, args=(my_info, client_update)).start()
+    else:
+        print("Inside the update timer, not sending anything. Timer cancelled")
 
 
 # Function to enqueue the update
@@ -20,11 +33,29 @@ def enqueue_update(client_update, server_info):
     return True
 
 
+# Function to start off an update timer for a specific client_id:
+def start_update_timer(client_update, my_info):
+    update_timer = threading.Timer(10.0, update_timer_function, args=(my_info, client_update))
+    my_info.update_threads[client_update.client_id] = update_timer
+    my_info.update_thread_flag = True
+    update_timer.start()
+
+
+# Function to cancel the update timer
+def cancel_update_timer(running_thread):
+    running_thread.cancel()
+    print("Cancelled the update timer")
+
+
 # Function to add the pending updates to the server
 def add_to_pending_updates(client_update, server_info):
     server_info.pending_updates[client_update.client_id] = client_update
+    print("Pending updates so far::")
+    for cu in server_info.pending_updates.values():
+        print("Client_ID:{0} Timestamp:{1} Update:{2}".format(cu.client_id, cu.timestamp, cu.update))
     # Set Update Timer(U.client id)
-    # Sync to disk
+    # Set a unique name for the update timer (One timer for one update)
+    start_update_timer(client_update, server_info)
     write_to_file(server_info)
 
 

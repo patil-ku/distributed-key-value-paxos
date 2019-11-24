@@ -1,5 +1,6 @@
 
 # Maintain this file to execute client updates
+from ClientFuntions import cancel_update_timer
 from ProcessVariables import LEADER_ELECTION, REG_LEADER
 from Proposal import send_proposals
 from NetworkFunctions import send_message
@@ -37,11 +38,15 @@ def upon_executing_client_update(my_info, client_update):
         reply_to_client(my_info, client_update)
         print("Success message sent to client for client_id:{0} and timestamp:{1} and address: {2}"
               .format(client_update.client_id, client_update.timestamp, my_info.client_map[client_update.client_id]))
-        if client_update in my_info.pending_updates.values():
-            # Cancel Update Timer
-            # Remove this update from the pending updates list
-            temp_dict = my_info.pending_updates
-            my_info.pending_updates = {key: val for key, val in temp_dict.items() if val != client_update}
+        for cu in my_info.pending_updates.values():
+            if cu.client_id == client_update.client_id and cu.timestamp == client_update.timestamp:
+                # if client_update in my_info.pending_updates.values():
+                print("Client update found in pending updates after execution, removing it and cancelling update timer")
+                my_info.update_thread_flag = False
+                cancel_update_timer(my_info.update_threads.get(client_update.client_id))
+                # Remove this update from the pending updates list
+                temp_dict = my_info.pending_updates
+                my_info.pending_updates = {key: val for key, val in temp_dict.items() if val != client_update}
 
     my_info.last_executed[client_update.client_id] = client_update.timestamp
     if my_info.state != LEADER_ELECTION:
@@ -50,6 +55,7 @@ def upon_executing_client_update(my_info, client_update):
     if my_info.state == REG_LEADER:
         send_proposals(my_info)
     print("Done executing Client Update")
+    my_info.update_executed = True
 
 
 # Advance ARU

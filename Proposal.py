@@ -57,10 +57,11 @@ def apply_proposal_to_ds(my_info, proposal):
               " seq number {0} now...".format(proposal.seq))
         my_info.global_history[proposal.seq] = {"Proposal": None, "Accepts": [], "Globally_Ordered_Update": None}
         my_info.global_history[proposal.seq]['Proposal'] = proposal
-        print("#################################################")
-        print("Applied Proposal: Global History now:")
-        print("Proposal View Stored:{0}".format(my_info.global_history[proposal.seq]['Proposal'].view))
-        print("#################################################")
+        my_info.update_executed = False
+        # print("#################################################")
+        # print("Applied Proposal: Global History now:")
+        # print("Proposal View Stored:{0}".format(my_info.global_history[proposal.seq]['Proposal'].view))
+        # print("#################################################")
 
 
 # Function to check for conflicts when a proposal is received:
