@@ -1,10 +1,10 @@
-import pickle
+import dill
 
 
 def write_to_file(data):
 	try :
 		with open("log","ab") as file:
-			pickle.dump(data,file)
+			dill.dump(data,file)
 
 	except Exception as e:
 		print("error in writing to log file",e)
@@ -14,7 +14,7 @@ def read_from_file():
 	server_info = None
 	try:
 		with open("log","rb") as file:
-			server_info = pickle.load(file)
+			server_info = dill.load(file)
 
 	except Exception as e:
 		print("error in reading from log file ", e)

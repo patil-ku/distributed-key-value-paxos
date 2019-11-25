@@ -81,7 +81,6 @@ def enqueue_unbound_pending_updates(my_info):
         enqueue_update(cu, my_info)
 
 
-#
 # # Function to remove the bound updates from the queue:
 def remove_bound_updates_from_queue(my_info):
     for cu in my_info.update_queue:

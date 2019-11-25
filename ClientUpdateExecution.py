@@ -4,7 +4,7 @@ from ClientFuntions import cancel_update_timer
 from ProcessVariables import LEADER_ELECTION, REG_LEADER
 from Proposal import send_proposals
 from NetworkFunctions import send_message
-
+import copy
 
 PORT = 9999
 
