@@ -18,6 +18,31 @@ def print_leader(my_info, total_hosts):
     print("\n<{0}> :: Server {1} is the new leader of view {2}.\n".format(my_info.pid, current_view_leader,
                                                                           my_info.last_attempted))
     my_info.current_leader_hostname = get_hostname_of_current_leader(current_view_leader, my_info)
+    print_global_history(my_info)
+
+
+# Function for checking the global history in each view:
+def print_global_history(my_info):
+    if len(my_info.global_history) > 0:
+        print("\n*****************************************************")
+        print("Global History so far:")
+        for gh in my_info.global_history:
+            print("\nGH Index Number:{0}".format(gh))
+            if my_info.global_history[gh]['Proposal'] is not None:
+                print("Proposal Details:")
+                prop = my_info.global_history[gh]['Proposal']
+                print("server_id:{0} view:{1} seq:{2}  update:{3}".format(prop.server_id, prop.view, prop.seq,
+                                                                          prop.update.update))
+            print("Accepts:")
+            for a in my_info.global_history[gh]['Accepts']:
+                print("server_id:{0} view:{1} seq:{2}".format(a.server_id, a.view, a.seq))
+
+            if my_info.global_history[gh]['Globally_Ordered_Update'] is not None:
+                print("Globally_Ordered_Update:")
+                gbu = my_info.global_history[gh]['Globally_Ordered_Update']
+                print("server_id:{0} seq:{1} update:{2}".format(gbu.server_id, gbu.seq, gbu.update.update))
+        print("\n Local ARU: {0}".format(my_info.local_aru))
+        print("*****************************************************\n")
 
 
 # Check for conflicts in the received prepare message
@@ -113,9 +138,9 @@ def construct_data_list(my_info, aru):
     for i in my_info.global_history:
         if i > aru and my_info.global_history[i]:
             if my_info.global_history[i]['Globally_Ordered_Update'] is not None:
-                data_list = data_list.append(my_info.global_history[i].get('Globally_Ordered_Update'))
+                data_list.append(my_info.global_history[i].get('Globally_Ordered_Update'))
             else:
-                data_list = data_list.append(my_info.global_history[i].get("Proposal"))
+                data_list.append(my_info.global_history[i].get("Proposal"))
     return data_list
 
 

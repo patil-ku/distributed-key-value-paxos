@@ -19,6 +19,7 @@ class ProcessVariables:
         self.prepare_oks = {}
         self.set_timer = False
         self.local_aru = 0
+        self.test_case = -1
 
         # dict of global slots, mapped by sequence number, each containing
         # Proposal - latest Proposal accepted for this sequence number, if any

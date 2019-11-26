@@ -106,3 +106,33 @@ class ClientWriteUpdate(Message):
         super(ClientWriteUpdate, self).__init__(type)
         self.client_id = client_id
         self.data = data_to_write
+
+
+# Type 14: Reconciliation request
+class Reconciliation_Request(Message):
+
+    def __init__(self, type, server_id, aru):
+        super(Reconciliation_Request, self).__init__(type)
+        self.server_id = server_id                      # Server id of sending server
+        self.aru = aru                      # Local Aru of sending server
+
+
+# Type 15: Reconciliation
+class Reconciliation(Message):
+
+    def __init__(self, type, server_id, aru, gh_dict):
+        super(Reconciliation, self).__init__(type)
+        self.server_id = server_id
+        self.aru = aru
+        # This is the dict of all the global history entries(Globally Ordered Updates
+        # and Proposals) that a server might have missed
+        self.gh_dict = gh_dict
+
+
+# Type 16: Reconciliation request
+class Periodic_Reconciliation(Message):
+
+    def __init__(self, type, server_id, aru):
+        super(Periodic_Reconciliation, self).__init__(type)
+        self.server_id = server_id  # Server id
+        self.aru = aru  # Local aru of sending server

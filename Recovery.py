@@ -15,13 +15,14 @@ def recover(pid):
 			# considering we get a single element for now
 			my_info = proc_variable_list
 			shift_to_leader_election(my_info.last_installed+1, my_info.all_hosts, my_info)
-	if(os.path.isfile("log")):
+
+	if os.path.isfile("log"):
 		my_info = read_from_file()
-		if(not my_info):
+		if not my_info:
 			print("no data found in log, initialising data .. ")
 			my_info = ProcessVariables(pid)
 		else:
-			#considering we get a single element for now
+			# considering we get a single element for now
 			shift_to_leader_election(my_info.last_installed+1, my_info.all_hosts,my_info)
 	else:
 		print("log does not exist, initialising data .. ")

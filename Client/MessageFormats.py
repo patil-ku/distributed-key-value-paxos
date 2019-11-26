@@ -70,7 +70,8 @@ class Proposal(Message):
         self.update = update              #the client update being bound to seq in this proposal
 
 
-#Type 10 : Globally Ordered Update
+
+# Type 10 : Globally Ordered Update
 class Globally_Ordered_Update(Message):
     def __init__(self,type,server_id,seq,update):
         super(Globally_Ordered_Update,self).__init__(type)
@@ -78,7 +79,8 @@ class Globally_Ordered_Update(Message):
         self.seq = seq                 #the sequence number of the update that was ordered
         self.update = update           #the client update bound to seq and globally ordered
 
-#Type 11 : Accept Message
+
+# Type 11 : Accept Message
 class Accept(Message):
     def __init__(self,type,server_id,view,seq):
         super(Accept,self).__init__(type)
@@ -103,3 +105,5 @@ class ClientWriteUpdate(Message):
         super(ClientWriteUpdate, self).__init__(type)
         self.client_id = client_id
         self.data = data_to_write
+
+

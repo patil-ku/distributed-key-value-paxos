@@ -50,12 +50,12 @@ def upon_executing_client_update(my_info, client_update):
 
     my_info.last_executed[client_update.client_id] = client_update.timestamp
     if my_info.state != LEADER_ELECTION:
-        print("Need to restart progress_timer")
+        print("Restarted progress_timer")
+        my_info.update_executed = True
         # Figure out how to restart progress timer
     if my_info.state == REG_LEADER:
         send_proposals(my_info)
     print("Done executing Client Update")
-    my_info.update_executed = True
 
 
 # Advance ARU
