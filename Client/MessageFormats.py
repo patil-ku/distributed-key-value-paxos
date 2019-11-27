@@ -89,7 +89,7 @@ class Accept(Message):
         self.seq = seq              #the sequence number of the associated Proposal
 
 
-# Type 12: Client Update
+# Type 12: Client Update For Writing/Set
 class Client_Update(Message):
     def __init__(self, type, client_id,server_id,timestamp,update):
         super(Client_Update,self).__init__(type)

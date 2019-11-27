@@ -46,7 +46,8 @@ def process_user_input(line, my_info):
     commands = line.split(' ')
     if commands[0] == 'WRITE':
         print("Sending data {0} to {1}".format(commands[1], my_info.connected_server_id))
-        write_data(commands[1], my_info)
+        data_to_be_sent = commands[1] + " " + commands[2]
+        write_data(data_to_be_sent, my_info)
 
     if commands[0] == 'READ':
         print("Reads not supported yet")

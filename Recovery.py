@@ -14,6 +14,10 @@ def recover(pid):
 		else:
 			# considering we get a single element for now
 			my_info = proc_variable_list
+			print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+			print("After Recovery:")
+			print("Local ARU:{0}".format(my_info.local_aru))
+			print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
 			shift_to_leader_election(my_info.last_installed+1, my_info.all_hosts, my_info)
 
 	if os.path.isfile("log"):
@@ -22,6 +26,10 @@ def recover(pid):
 			print("no data found in log, initialising data .. ")
 			my_info = ProcessVariables(pid)
 		else:
+			print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+			print("After Recovery 2:")
+			print("Local ARU:{0}".format(my_info.local_aru))
+			print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
 			# considering we get a single element for now
 			shift_to_leader_election(my_info.last_installed+1, my_info.all_hosts,my_info)
 	else:

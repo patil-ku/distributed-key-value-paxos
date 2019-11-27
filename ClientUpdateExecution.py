@@ -5,6 +5,7 @@ from ProcessVariables import LEADER_ELECTION, REG_LEADER
 from Proposal import send_proposals
 from NetworkFunctions import send_message
 import copy
+from paxos_hash_table import HashTable
 
 PORT = 9999
 
@@ -19,6 +20,9 @@ def execute_client_update(my_info, accept_msg):
                                                                                            client_update.timestamp,
                                                                                            client_update.update))
     print("-------------------------------- \n")
+    ht = HashTable('HashTable.json', True, True)
+    key_value = client_update.update.split(' ')
+    ht.set(key_value[0], key_value[1])
     upon_executing_client_update(my_info,  client_update)
 
 
