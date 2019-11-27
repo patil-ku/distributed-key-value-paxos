@@ -18,6 +18,7 @@ def read_from_file():
 
 	except Exception as e:
 		print("error in reading from log file ", e)
+		return server_info
 
 	return server_info
 
