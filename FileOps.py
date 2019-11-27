@@ -3,7 +3,7 @@ import dill
 
 def write_to_file(data):
 	try :
-		with open("log","ab") as file:
+		with open("log","wb+") as file:
 			dill.dump(data,file)
 
 	except Exception as e:
