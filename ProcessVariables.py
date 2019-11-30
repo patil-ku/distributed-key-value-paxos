@@ -49,3 +49,17 @@ class ProcessVariables:
         # Dictionary used for managing update timer threads
         self.update_threads = {}
         self.update_thread_flag = False
+
+
+
+    def __str__(self):
+
+        res = "pid : "+str(self.pid)+"\n"+"state : "+str(self.state)+"\n"+ \
+                "last_attempted : "+str(self.last_attempted)+"\n"+ \
+                "last_installed : "+str(self.last_installed)+"\n"+\
+                "local_aru : "+str(self.local_aru)+"\n"
+
+        return res
+
+
+    

@@ -6,19 +6,6 @@ import os.path
 
 def recover(pid):
 	my_info = None
-	if os.path.isfile("log"):
-		proc_variable_list = read_from_file()
-		if not proc_variable_list:
-			print("no data found in log, initialising data .. ")
-			my_info = ProcessVariables(pid)
-		else:
-			# considering we get a single element for now
-			my_info = proc_variable_list
-			print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-			print("After Recovery:")
-			print("Local ARU:{0}".format(my_info.local_aru))
-			print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
-			shift_to_leader_election(my_info.last_installed+1, my_info.all_hosts, my_info)
 
 	if os.path.isfile("log"):
 		my_info = read_from_file()
