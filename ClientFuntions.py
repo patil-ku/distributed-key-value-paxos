@@ -1,10 +1,11 @@
-from MessageFormats import Client_Update, Proposal
+from MessageFormats import Client_Update, Proposal, Server_Response
 from FileOps import write_to_file_dummy, write_to_file
 from pickle import loads
 from ProcessVariables import LEADER_ELECTION, REG_LEADER, REG_NON_LEADER
-from NetworkFunctions import send_message_using_hostname
+from NetworkFunctions import send_message_using_hostname, send_message
 from Proposal import send_proposals
 import threading
+from paxos_hash_table import HashTable
 
 
 # Threading function for update timer:
@@ -120,7 +121,8 @@ def handle_client_updates(client_update, my_info):
 
 
 # Dummy method for testing
-def handle_client_write_updates(write_msg, my_info):
-    print("Inside client write update")
-    my_info.seq_no += 1
-    write_to_file_dummy(write_msg.data)
+def handle_client_read_request(recvd_msg, my_info, address):
+    ht = HashTable('HashTable.json', True, True)
+    value = ht.get(recvd_msg.key)
+    client_response = Server_Response(20, my_info.pid, recvd_msg.key, value)
+    send_message(client_response, address)

@@ -13,7 +13,7 @@ from Reconciliation import send_periodic_reconciliation_message, handle_periodic
     handle_reconciliation_request, handle_reconciliation_message
 from ViewChange import shift_to_leader_election, handle_view_change_message, leader_of_last_attempted, \
     handle_vc_proof_messages, pre_install_ready
-from ClientFuntions import handle_client_write_updates, handle_client_updates
+from ClientFuntions import handle_client_read_request, handle_client_updates
 from Accept import handle_accept, check_conflicts_for_accept
 from Recovery import recover
 
@@ -192,13 +192,13 @@ if __name__ == '__main__':
                         handle_accept(my_info, recvd_msg)
 
                 if recvd_msg.type == 12:
-                    print("Client update received ")
+                    print("Client Write update received ")
                     my_info.client_map[recvd_msg.client_id] = address
                     handle_client_updates(recvd_msg, my_info)
 
-                if(recvd_msg.type == 13):
-                    print("Client write update received")
-                    handle_client_write_updates(recvd_msg, my_info)
+                if recvd_msg.type == 13:
+                    print("Client Read Request received")
+                    handle_client_read_request(recvd_msg, my_info, address)
 
                 if recvd_msg.type == 14:
                     print("Received a reconciliation request with aru:{0} and my local_aru:{1}"

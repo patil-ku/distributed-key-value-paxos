@@ -6,6 +6,7 @@ from Proposal import send_proposals
 from NetworkFunctions import send_message
 import copy
 from paxos_hash_table import HashTable
+from MessageFormats import Write_Success
 
 PORT = 9999
 
@@ -30,7 +31,8 @@ def execute_client_update(my_info, accept_msg):
 def reply_to_client(my_info, client_update):
     client_address = my_info.client_map[client_update.client_id]
     # Dummy, add a message format later
-    msg = "SUCCESS for timestamp: {0} update:{1}".format(client_update.timestamp, client_update.update)
+    # msg = "SUCCESS for timestamp: {0} update:{1}".format(client_update.timestamp, client_update.update)
+    msg = Write_Success(21, my_info.pid, client_update.timestamp, client_update.update)
     send_message(msg, client_address)
 
 

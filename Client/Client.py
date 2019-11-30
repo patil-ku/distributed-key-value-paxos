@@ -2,21 +2,39 @@ import argparse
 import socket
 from pickle import loads, dumps
 
-from MessageFormats import ClientWriteUpdate, Client_Update
+from MessageFormats import Client_Read_Update, Client_Update
 import select
 import sys
+from PIL import Image
 
 
 PORT = 9999
 BUFFER_SIZE = 1024
 
 
+
 class ClientProcessVariables:
     def __init__(self):
         self.timestamp = 0
-        self.pid = 99 # Random for now, will have to change later
+        self.pid = -1
         self.connected_server_id = -1
         self.connected_server = None
+
+
+def __average_hash__(image_path, hash_size=8):
+        """ Compute the average hash of the given image. """
+        # print(image_path)
+        with open(image_path, 'rb') as f:
+            # Open the image, resize it and convert it to black & white.
+            image = Image.open(f).resize((hash_size, hash_size), Image.ANTIALIAS).convert('L')
+            pixels = list(image.getdata())
+
+        avg = sum(pixels) / len(pixels)
+
+        # Compute the hash based on each pixels value compared to the average.
+        bits = "".join(map(lambda pixel: '1' if pixel > avg else '0', pixels))
+        hashformat = "0{hashlength}x".format(hashlength=hash_size ** 2 // 4)
+        return int(bits, 2).__format__(hashformat)
 
 
 def get_socket(bindStatus):
@@ -44,16 +62,47 @@ def get_socket(bindStatus):
 def process_user_input(line, my_info):
 
     commands = line.split(' ')
-    if commands[0] == 'WRITE':
+    if commands[0] == 'set':
         print("Sending data {0} to {1}".format(commands[1], my_info.connected_server_id))
         data_to_be_sent = commands[1] + " " + commands[2]
         write_data(data_to_be_sent, my_info)
 
-    if commands[0] == 'READ':
-        print("Reads not supported yet")
+    elif commands[0] == 'get':
+        data_to_be_sent = commands[1]
+        print("Sending a request to fetch the value of {0} to {1}".format(commands[1], my_info.connected_server_id))
+        read_data(data_to_be_sent, my_info)
 
-    if commands[0] != 'READ' and commands[0] != 'WRITE':
-        print("Not supported yet")
+    elif commands[0] == 'iset':
+        print("Request to store details for an image")
+        commands[1] = __average_hash__(commands[1])
+        data_to_be_sent = " ".join(commands[1:])
+        write_data(data_to_be_sent, my_info)
+
+    elif commands[0] == 'iget':
+        print("Request to get image details")
+        commands[1] = __average_hash__(commands[1])
+        data_to_be_sent = " ".join(commands[1:])
+        read_data(data_to_be_sent, my_info)
+
+    else:
+        print("Sorry, not supported yet")
+
+
+def read_data(data_to_be_sent, my_info):
+    writing_socket = get_socket(False)
+    try:
+        addr = socket.gethostbyname(my_info.connected_server)
+        serv_addr = (addr, PORT)
+    except socket.error as error:
+        print("Error in getting address of server")
+        exit(1)
+    req_msg = Client_Read_Update(13, my_info.pid, data_to_be_sent)
+    bytes_to_send = dumps(req_msg)
+    num_sent = writing_socket.sendto(bytes_to_send, serv_addr)
+    if num_sent < 0:
+        print("No data sent")
+    else:
+        print("Read Request sent successfully to {0}".format(serv_addr))
 
 
 def write_data(data_to_be_sent, my_info):
@@ -100,10 +149,17 @@ if __name__ == '__main__':
                 print("Got something from the server")
                 msg, address = s.recvfrom(BUFFER_SIZE)
                 recvd_msg = loads(msg)
-                # For now the server only sends a string
-                print(recvd_msg)
+
+                # Response to a Get Request
+                if recvd_msg.type == 20:
+                    print("Got a response to a GET request")
+                    print("Key Requested:{0} Value:{1}\n".format(recvd_msg.key, recvd_msg.value))
+
+                # Response to a Write Request
+                if recvd_msg.type == 21:
+                    print("Got a SUCCESS message from the server for timestamp:{0} update:{1}"
+                          .format(recvd_msg.timestamp, recvd_msg.update))
 
             if s is sys.stdin:
-                print("User entered something:")
                 line = sys.stdin.readline().rstrip()
                 process_user_input(line, my_info)

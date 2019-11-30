@@ -99,11 +99,28 @@ class Client_Update(Message):
         self.update = update
 
 
-# Type 13 : Client Write Update
-class ClientWriteUpdate(Message):
-    def __init__(self, type, client_id, data_to_write):
-        super(ClientWriteUpdate, self).__init__(type)
+# Type 13 : Client Key Update
+# Send a key to the server to fetch the value of the key
+class Client_Read_Update(Message):
+    def __init__(self, type, client_id, key):
+        super(Client_Read_Update, self).__init__(type)
         self.client_id = client_id
-        self.data = data_to_write
+        self.key = key
 
 
+# Type 20 : Reply from server
+class Server_Response(Message):
+    def __init__(self, type, server_id, key, value):
+        super(Server_Response, self).__init__(type)
+        self.server_id = server_id
+        self.key = key
+        self.value = value
+
+
+# Type 21: Success Message for a Write Update
+class Write_Success(Message):
+    def __init__(self, type, server_id, timestamp, update):
+        super(Write_Success, self).__init__(type)
+        self.server_id = server_id
+        self.timestamp = timestamp
+        self.update = update

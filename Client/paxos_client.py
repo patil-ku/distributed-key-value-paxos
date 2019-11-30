@@ -1,5 +1,6 @@
 from PIL import Image
 
+
 def __average_hash__(image_path, hash_size=8):
         """ Compute the average hash of the given image. """
         # print(image_path)
@@ -17,7 +18,7 @@ def __average_hash__(image_path, hash_size=8):
 
 
 while True:
-    inp=raw_input(">> ")
+    inp = input(">> ")
     if inp=="quit":
         break
     elif (inp.split(" ")[0]=="iget") or (inp.split(" ")[0]=="iset"):
