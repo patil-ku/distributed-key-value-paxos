@@ -14,9 +14,9 @@ We are mainly focused on keeping the data consistent and available since these p
 
 ## Tech Used
 
-Python3.6
-Docker
-Protobuffs
++ Python3.6
++ Docker
++ Protobuffs
 
 
 ## Structure of code
@@ -86,9 +86,8 @@ Protobuffs
  - Once you have started up the servers and the servers read the following message "All Nodes are up!"; the client can then start sending requests
  - On the client side, there are four 4 apis provided for interacting with the key-value store
 
-```
+ 
  	1. set <key> <value> 				: This is used to save/write data to the key-value store. 
  	2. get <key>		 				: This is used to retrieve the value for a key
  	3. iset <image location> <metadata> : iset is used for saving image hashes and their related metadata. You need to provide the location of the image and its metadata
  	4. iget <image location>			: This is used to retrieve the given image's metadata.
-```
