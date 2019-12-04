@@ -146,18 +146,20 @@ if __name__ == '__main__':
 
         for s in readable:
             if s is listening_socket:
-                print("Got something from the server")
+                # print("Got something from the server")
                 msg, address = s.recvfrom(BUFFER_SIZE)
                 recvd_msg = loads(msg)
 
                 # Response to a Get Request
                 if recvd_msg.type == 20:
-                    print("Got a response to a GET request")
+                    # print("Got a response to a GET request")
+                    print("\n------------------------------------------------------------")
                     print("Key Requested:{0} Value:{1}\n".format(recvd_msg.key, recvd_msg.value))
+                    print("------------------------------------------------------------\n")
 
                 # Response to a Write Request
                 if recvd_msg.type == 21:
-                    print("Got a SUCCESS message from the server for timestamp:{0} update:{1}"
+                    print("Got a SUCCESS message from the server for timestamp:{0} update:{1}\n"
                           .format(recvd_msg.timestamp, recvd_msg.update))
 
             if s is sys.stdin:

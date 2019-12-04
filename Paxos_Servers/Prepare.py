@@ -24,7 +24,7 @@ def print_leader(my_info, total_hosts):
 # Function for checking the global history in each view:
 def print_global_history(my_info):
     if len(my_info.global_history) > 0:
-        print("\n*****************************************************")
+        print("\n**************************************************************")
         print("Global History so far:")
         for gh in my_info.global_history:
             print("\nGH Index Number:{0}".format(gh))
@@ -42,7 +42,7 @@ def print_global_history(my_info):
                 gbu = my_info.global_history[gh]['Globally_Ordered_Update']
                 print("server_id:{0} seq:{1} update:{2}".format(gbu.server_id, gbu.seq, gbu.update.update))
         print("\n Local ARU: {0}".format(my_info.local_aru))
-        print("*****************************************************\n")
+        print("**************************************************************\n")
 
 
 # Check for conflicts in the received prepare message
