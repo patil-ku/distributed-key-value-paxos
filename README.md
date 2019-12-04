@@ -87,8 +87,8 @@ Protobuffs
  - On the client side, there are four 4 apis provided for interacting with the key-value store
 
 ```
- 	1. set <key> <value> 				: This is used to save/write data to the key-value store. 
- 	2. get <key>		 				: This is used to retrieve the value for a key
+ 	1. set <key> <value> : This is used to save/write data to the key-value store. 
+ 	2. get <key>		 : This is used to retrieve the value for a key
  	3. iset <image location> <metadata> : iset is used for saving image hashes and their related metadata. You need to provide the location of the image and its metadata
- 	4. iget <image location>			: This is used to retrieve the given image's metadata.
+ 	4. iget <image location> : This is used to retrieve the given image's metadata.
 ```
